@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Whose Night</title>
+<style>
+  :root{
+    --bg: #14171c;
+    --bg-elevated: #1c2029;
+    --bg-elevated-2: #232833;
+    --line: #2b303b;
+    --text: #e9e5dc;
+    --text-dim: #9ba0ab;
+    --her: #e0975c;
+    --her-soft: #3a2e24;
+    --him: #5b96a8;
+    --him-soft: #22333a;
+    --today-ring: #e9e5dc;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body{
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 28px 16px 64px;
+  }
+
+  main{
+    width: 100%;
+    max-width: 480px;
+  }
+
+  header.page-head{
+    margin-bottom: 22px;
+  }
+
+  header.page-head h1{
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: var(--text-dim);
+    margin: 0;
+  }
+
+  /* ---------- Hero ---------- */
+
+  .hero{
+    border-radius: 18px;
+    padding: 26px 24px 22px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--line);
+    margin-bottom: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero.owner-her{ background: linear-gradient(155deg, var(--her-soft), var(--bg-elevated) 65%); }
+  .hero.owner-him{ background: linear-gradient(155deg, var(--him-soft), var(--bg-elevated) 65%); }
+
+  .hero .label{
+    font-size: 13px;
+    color: var(--text-dim);
+    margin: 0 0 6px;
+  }
+
+  .hero .who{
+    font-size: 34px;
+    font-weight: 650;
+    margin: 0 0 4px;
+    letter-spacing: -0.01em;
+  }
+
+  .hero.owner-her .who{ color: var(--her); }
+  .hero.owner-him .who{ color: var(--him); }
+
+  .hero .date{
+    font-size: 14px;
+    color: var(--text-dim);
+    margin: 0;
+  }
+
+  .hero-row{
+    display: flex;
+    gap: 12px;
+    margin-bottom: 22px;
+  }
+
+  .hero-row .hero{
+    flex: 1;
+    padding: 18px 18px 16px;
+    margin-bottom: 0;
+  }
+
+  .hero-row .who{ font-size: 22px; }
+  .hero-row .label{ font-size: 12px; }
+  .hero-row .date{ font-size: 12px; }
+
+  /* ---------- Handover strip ---------- */
+
+  .handover{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--line);
+    margin-bottom: 26px;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  .handover strong{
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .handover .dot{
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--text-dim);
+    flex-shrink: 0;
+  }
+
+  /* ---------- Calendar ---------- */
+
+  .cal-head{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .cal-head h2{
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .cal-nav{
+    display: flex;
+    gap: 6px;
+  }
+
+  .cal-nav button{
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: var(--bg-elevated);
+    color: var(--text);
+    font-size: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .cal-nav button:hover{ background: var(--bg-elevated-2); }
+  .cal-nav button:active{ transform: translateY(1px); }
+
+  .weekday-row{
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-bottom: 6px;
+  }
+
+  .weekday-row div{
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-dim);
+    padding-bottom: 2px;
+  }
+
+  .cal-grid{
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-bottom: 26px;
+  }
+
+  .cal-cell{
+    aspect-ratio: 1;
+    border-radius: 9px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 500;
+    position: relative;
+    border: 1px solid transparent;
+  }
+
+  .cal-cell.empty{ visibility: hidden; }
+
+  .cal-cell.owner-her{ background: var(--her-soft); color: var(--her); }
+  .cal-cell.owner-him{ background: var(--him-soft); color: var(--him); }
+
+  .cal-cell.is-today{ border-color: var(--today-ring); }
+
+  .cal-cell .daynum{ font-size: 13px; }
+
+  /* ---------- Legend ---------- */
+
+  .legend{
+    display: flex;
+    gap: 18px;
+    margin-bottom: 30px;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  .legend .item{
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .legend .swatch{
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+  }
+
+  .legend .swatch.her{ background: var(--her); }
+  .legend .swatch.him{ background: var(--him); }
+
+  /* ---------- Footer note ---------- */
+
+  footer{
+    font-size: 11px;
+    color: var(--text-dim);
+    text-align: center;
+    line-height: 1.6;
+    opacity: 0.75;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<main>
+
+  <header class="page-head">
+    <h1>Whose Night</h1>
+  </header>
+
+  <div class="hero-row" id="heroRow"></div>
+
+  <div class="handover" id="handoverStrip"></div>
+
+  <div class="cal-head">
+    <h2 id="calMonthLabel"></h2>
+    <div class="cal-nav">
+      <button id="prevMonth" aria-label="Previous month">‹</button>
+      <button id="todayBtn" aria-label="Jump to today">•</button>
+      <button id="nextMonth" aria-label="Next month">›</button>
+    </div>
+  </div>
+
+  <div class="weekday-row">
+    <div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
+  </div>
+
+  <div class="cal-grid" id="calGrid"></div>
+
+  <div class="legend">
+    <div class="item"><span class="swatch her"></span>With her</div>
+    <div class="item"><span class="swatch him"></span>With her ex</div>
+  </div>
+
+  <footer>
+    Mon &amp; Tue nights: always her &middot; Wed &amp; Thu nights: always him<br>
+    Weekends alternate &mdash; anchored to Fri 18 Sep 2026 (her weekend)
+  </footer>
+
+</main>
+
+<script>
+(function(){
+
+  // ---- Schedule rules ----
+
+  function stripTime(d){
+    var x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    return x;
+  }
+
+  function addDays(d, n){
+    var x = new Date(d);
+    x.setDate(x.getDate() + n);
+    return x;
+  }
+
+  // Snaps any date to the Friday on or before it. This makes the anchor
+  // robust even if the date given doesn't actually fall on a Friday --
+  // it locks to the weekend block that date belongs to.
+  function fridayOnOrBefore(d){
+    var dow = d.getDay(); // 0 Sun ... 6 Sat
+    var daysSinceFriday = (dow - 5 + 7) % 7;
+    return addDays(d, -daysSinceFriday);
+  }
+
+  // Anchor: a date known to fall within a "her weekend" block.
+  // 19 Sep 2026 is actually a Saturday -- the Friday that starts that
+  // block is 18 Sep 2026, so the block runs Fri 18 - Sun 20 Sept (hers).
+  var ANCHOR_FRIDAY = fridayOnOrBefore(stripTime(new Date(2026, 8, 19)));
+
+  // Returns 'her' or 'him' for the *night* of the given date (that evening
+  // through the following morning).
+  function ownerOf(date){
+    var d = stripTime(date);
+    var dow = d.getDay(); // 0 Sun ... 6 Sat
+
+    if (dow === 1 || dow === 2) return 'her';   // Mon, Tue
+    if (dow === 3 || dow === 4) return 'him';   // Wed, Thu
+
+    // Fri (5), Sat (6), Sun (0) -> depends which weekend block
+    var friday;
+    if (dow === 5) friday = d;
+    else if (dow === 6) friday = addDays(d, -1);
+    else friday = addDays(d, -2); // Sunday
+
+    var diffDays = Math.round((friday - ANCHOR_FRIDAY) / 86400000);
+    var weeksDiff = diffDays / 7;
+    var parity = ((weeksDiff % 2) + 2) % 2;
+    return parity === 0 ? 'her' : 'him';
+  }
+
+  function ownerLabel(owner){
+    return owner === 'her' ? 'With her' : 'With her ex';
+  }
+
+  function fmtDate(d){
+    return d.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long' });
+  }
+
+  function fmtDateShort(d){
+    return d.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' });
+  }
+
+  // ---- Hero (tonight / tomorrow) ----
+  function renderHero(){
+    var today = stripTime(new Date());
+    var tomorrow = addDays(today, 1);
+
+    var todayOwner = ownerOf(today);
+    var tomorrowOwner = ownerOf(tomorrow);
+
+    var heroRow = document.getElementById('heroRow');
+    heroRow.innerHTML =
+      '<div class="hero owner-' + todayOwner + '">' +
+        '<p class="label">Tonight</p>' +
+        '<p class="who">' + ownerLabel(todayOwner) + '</p>' +
+        '<p class="date">' + fmtDate(today) + '</p>' +
+      '</div>' +
+      '<div class="hero owner-' + tomorrowOwner + '">' +
+        '<p class="label">Tomorrow</p>' +
+        '<p class="who">' + ownerLabel(tomorrowOwner) + '</p>' +
+        '<p class="date">' + fmtDate(tomorrow) + '</p>' +
+      '</div>';
+
+    // Handover strip: find next date the owner changes
+    var cursor = today;
+    var currentOwner = todayOwner;
+    var limit = 30;
+    var switchDate = null;
+    var switchOwner = null;
+    for (var i = 0; i < limit; i++){
+      cursor = addDays(cursor, 1);
+      var o = ownerOf(cursor);
+      if (o !== currentOwner){
+        switchDate = cursor;
+        switchOwner = o;
+        break;
+      }
+    }
+
+    var strip = document.getElementById('handoverStrip');
+    if (switchDate){
+      var isTomorrow = (switchDate - tomorrow === 0);
+      var when = isTomorrow ? 'tomorrow evening' : fmtDateShort(switchDate) + ' evening';
+      strip.innerHTML = '<span class="dot"></span><span>Next handover: <strong>' + when + '</strong> &mdash; switches to ' + ownerLabel(switchOwner).toLowerCase() + '</span>';
+    } else {
+      strip.innerHTML = '';
+    }
+  }
+
+  // ---- Month calendar ----
+  var viewDate = stripTime(new Date());
+  viewDate.setDate(1);
+
+  function renderCalendar(){
+    var year = viewDate.getFullYear();
+    var month = viewDate.getMonth();
+
+    var monthLabel = viewDate.toLocaleDateString('en-AU', { month: 'long', year: 'numeric' });
+    document.getElementById('calMonthLabel').textContent = monthLabel;
+
+    var firstOfMonth = new Date(year, month, 1);
+    var startDow = firstOfMonth.getDay(); // 0 Sun
+    var daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    var today = stripTime(new Date());
+
+    var grid = document.getElementById('calGrid');
+    var html = '';
+
+    for (var i = 0; i < startDow; i++){
+      html += '<div class="cal-cell empty"></div>';
+    }
+
+    for (var day = 1; day <= daysInMonth; day++){
+      var d = new Date(year, month, day);
+      var owner = ownerOf(d);
+      var isToday = (d.getTime() === today.getTime());
+      html += '<div class="cal-cell owner-' + owner + (isToday ? ' is-today' : '') + '">' +
+                '<span class="daynum">' + day + '</span>' +
+              '</div>';
+    }
+
+    grid.innerHTML = html;
+  }
+
+  document.getElementById('prevMonth').addEventListener('click', function(){
+    viewDate.setMonth(viewDate.getMonth() - 1);
+    renderCalendar();
+  });
+
+  document.getElementById('nextMonth').addEventListener('click', function(){
+    viewDate.setMonth(viewDate.getMonth() + 1);
+    renderCalendar();
+  });
+
+  document.getElementById('todayBtn').addEventListener('click', function(){
+    viewDate = stripTime(new Date());
+    viewDate.setDate(1);
+    renderCalendar();
+  });
+
+  renderHero();
+  renderCalendar();
+
+  // Refresh hero at local midnight so "tonight" stays accurate if the
+  // page is left open overnight.
+  function msUntilNextMidnight(){
+    var now = new Date();
+    var next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 5, 0);
+    return next - now;
+  }
+  function scheduleMidnightRefresh(){
+    setTimeout(function(){
+      renderHero();
+      renderCalendar();
+      scheduleMidnightRefresh();
+    }, msUntilNextMidnight());
+  }
+  scheduleMidnightRefresh();
+
+})();
+</script>
+</body>
+</html>
